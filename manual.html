@@ -2,171 +2,41 @@
 <html>
 
 <head>
-  <meta charset="utf-8">
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Ubuntu:regular,bold&subset=Latin">
-  <script src="js/jquery.js"></script>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="styles/style.css">
+	<script type="text/javascript" src="js/jquery.js"></script>
+	<script type="text/javascript" src="socket.io/socket.io.js"></script>
+	<script type="text/javascript" src="js/enums.js"></script>
+	<script>var socket = io('http://localhost:8080');</script>
 </head>
 
-<body style="position: relative">
-  <script src="js/enums.js"></script>
-  <table cellspacing="0px" id="table">
-    <tr>
-      <th>Enable drone:</th>
-      <th><input type="checkbox" id="enabled"></th>
-      <th style="border-right: 0px;"></th>
-      <th style="border-left: 0px;"></th>
-    </tr>
-    <tr>
-      <th>Key:</th>
-      <th>Action:</th>
-      <th style="width: 100px">Status:</th>
-      <th style="width: 169.2px;">Parameters:</th>
-    </tr>
-  </table>
-  <div style="top: 0; right: 0; position: absolute; width: 45%; height: 100%">
-    <div id="videopanel"></div>
-    <table id=info>
-      <tr>
-        
-      </tr>
-    </table>
-  </div>
-  <script>
-    for (i in enums) {
-      var code = i.replace("_CODE", "")
-      var name = keyboardMap[code]
-      var table = document.getElementById("table")
-      var row = table.insertRow()
-      row.insertCell().innerText = name;
-      row.insertCell().innerText = enums[i].NAME;
-      var td = document.createElement("td");
-      td.setAttribute("id", enums[i].NAME + "_KEY");
-      td.innerText = "FALSE";
-      row.appendChild(td)
-      var child = document.createElement("input");
-      child.type = "text";
-      child.id = `${enums[i].NAME}_VAL`;
-      child.placeholder = "parameters";
-      child.className = "parameter"
+<body>
+	<div style="position: relative">
+		<table cellspacing="0px" id="table">
+			<tr>
+				<th>Enable drone:</th>
+				<th><input type="checkbox" id="enabled"></th>
+				<th style="border-right: 0px;"></th>
+				<th style="border-left: 0px;"></th>
+			</tr>
+			<tr>
+				<th>Key:</th>
+				<th>Action:</th>
+				<th style="width: 100px">Status:</th>
+				<th style="width: 169.2px;">Parameters:</th>
+			</tr>
+		</table>
+		<div style="top: 0; right: 0; position: absolute; width: 45%; height: 100%">
+			<div id="videopanel"></div>
+			<table id=info>
+				<tr>
 
-      if (enums[i].PARAMS != undefined && enums[i].PARAMS.length > 0) {
-        child.defaultValue = enums[i].PARAMS.join(",")
-      }
-      if (enums[i].NON_EDITABLE) {
-        child.disabled = true;
-      }
-      td = document.createElement("td")
-      td.style = "padding: 0px"
-      td.innerHTML = child.outerHTML
-      row.appendChild(td)
-    }
-  </script>
-  <script>
-    window.onkeydown = function (e) {
-      if (!document.getElementById("enabled").checked) return;
-      var code = e.keyCode;
-      var obj = enums[code + "_CODE"];
-      if (obj == undefined) return;
-      if (obj.TYPE != ACTION) return;
-      if (sessionStorage.getItem(obj.NAME + "_DOWN") == "true") return;
-      sessionStorage.setItem(obj.NAME + "_DOWN", "true");
-      document.getElementById(obj.NAME + "_KEY").style = "background-color: #00b400"
-      document.getElementById(obj.NAME + "_KEY").innerText = "DOWN"
-      var temp = document.getElementById(obj.NAME + "_VAL").value;
-      var param = temp.trim() == "" ? undefined : temp;
-      $.ajax({
-        url: "http://localhost:8080",
-        method: "POST",
-        data: JSON.stringify({
-          comm: obj.COMMAND,
-          params: [param]
-        })
-      })
-      // client[obj.COMMAND](param)
-      console.log(`${obj.COMMAND}(${param})`)
-    }
-    window.onkeyup = function (e) {
-      if (!document.getElementById("enabled").checked) return;
-      var code = e.keyCode;
-      var obj = enums[code + "_CODE"];
-      if (obj == undefined) return;
-      document.getElementById(obj.NAME + "_KEY").style = "background-color: #00b400"
-      switch (obj.TYPE) {
-        case ACTION:
-          sessionStorage.removeItem(obj.NAME + "_DOWN")
-          $.ajax({
-            url: "http://localhost:8080",
-            method: "POST",
-            data: JSON.stringify({
-              comm: obj.COMMAND,
-              params: [0]
-            })
-          })
-          // client[obj.COMMAND](0)
-          document.getElementById(obj.NAME + "_KEY").innerText = "FALSE"
-          document.getElementById(obj.NAME + "_KEY").style = ""
-          break;
-        case PRESS:
-          if (document.getElementById(obj.NAME + "_KEY").innerText == "PRESSED") return;
-          var params = obj.PARAMS;
-          $.ajax({
-            url: "http://localhost:8080",
-            method: "POST",
-            data: JSON.stringify({
-              comm: obj.COMMAND,
-              params: params
-            })
-          })
-          document.getElementById(obj.NAME + "_KEY").innerText = "PRESSED"
-          setTimeout(function wait() {
-            document.getElementById(obj.NAME + "_KEY").innerText = "FALSE"
-            document.getElementById(obj.NAME + "_KEY").style = ""
-          }, 3000)
-          break;
-        case TOGGLE:
-          var temp = document.getElementById(obj.NAME + "_KEY").innerText;
-          var val = temp.trim() == "" ? "TRUE" : temp;
-          val = val == "TRUE" ? "FALSE" : "TRUE";
-          var comm = obj.COMMAND[val];
-
-          temp = document.getElementById(obj.NAME + "_VAL").value;
-          var param = temp.trim() == "" ? undefined : temp;
-          $.ajax({
-            url: "http://localhost:8080",
-            method: "POST",
-            data: JSON.stringify({
-              comm: comm,
-              params: [param]
-            })
-          })
-
-          document.getElementById(obj.NAME + "_KEY").innerText = val
-          document.getElementById(obj.NAME + "_KEY").style = ""
-          break;
-        case CUSTOM:
-          if (document.getElementById(obj.NAME + "_KEY").innerText == "PRESSED") return;
-          temp = document.getElementById(obj.NAME + "_VAL").value;
-          var param = temp.trim() == "" ? undefined : temp;
-          var params = obj.PARAMS == undefined ? [param] : obj.PARAMS;
-          $.ajax({
-            url: "http://localhost:8080",
-            method: "POST",
-            data: JSON.stringify({
-              comm: obj.COMMAND,
-              params: params,
-              custom: true
-            })
-          })
-          document.getElementById(obj.NAME + "_KEY").innerText = "PRESSED"
-          setTimeout(function wait() {
-            document.getElementById(obj.NAME + "_KEY").innerText = "FALSE"
-            document.getElementById(obj.NAME + "_KEY").style = ""
-          }, 3000)
-          break;
-      }
-    }
-  </script>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<script src="js/setup.js"></script>
+	<script src="js/keyevents.js"></script>
 </body>
 
 </html>
