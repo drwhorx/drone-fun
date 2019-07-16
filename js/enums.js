@@ -37,56 +37,56 @@ const enums = {
     COMMAND: "front",
     TYPE: ACTION,
     KEY: "W",
-    PARAMS: [0.5]
+    PARAMS: [1]
   },
   "65_CODE": {
     NAME: "LEFT",
     COMMAND: "left",
     TYPE: ACTION,
     KEY: "A",
-    PARAMS: [0.5]
+    PARAMS: [1]
   },
   "83_CODE": {
     NAME: "BACK",
     COMMAND: "back",
     TYPE: ACTION,
     KEY: "S",
-    PARAMS: [0.5]
+    PARAMS: [1]
   },
   "68_CODE": {
     NAME: "RIGHT",
     COMMAND: "right",
     TYPE: ACTION,
     KEY: "D",
-    PARAMS: [0.5]
+    PARAMS: [1]
   },
   "100_CODE": {
     NAME: "COUNTERCLOCKWISE",
     COMMAND: "counterClockwise",
     TYPE: ACTION,
     KEY: "NUMPAD 4",
-    PARAMS: [0.5]
+    PARAMS: [1]
   },
   "102_CODE": {
     NAME: "CLOCKWISE",
     COMMAND: "clockwise",
     TYPE: ACTION,
     KEY: "NUMPAD 6",
-    PARAMS: [0.5]
+    PARAMS: [1]
   },
   "104_CODE": {
     NAME: "UP",
     COMMAND: "up",
     TYPE: ACTION,
     KEY: "NUMPAD 8",
-    PARAMS: [0.5]
+    PARAMS: [1]
   },
   "98_CODE": {
     NAME: "DOWN",
     COMMAND: "down",
     TYPE: ACTION,
     KEY: "NUMPAD 2",
-    PARAMS: [0.5]
+    PARAMS: [1]
   },
   "49_CODE": {
     NAME: "FLIP RIGHT",

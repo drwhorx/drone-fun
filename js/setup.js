@@ -1,3 +1,6 @@
+function enable() {
+    document.getElementById("enabled").toggleAttribute("checked");
+}
 for (i in enums) {
     var code = i.replace("_CODE", "")
     var name = enums[i].KEY
@@ -26,3 +29,10 @@ for (i in enums) {
     td.innerHTML = child.outerHTML
     row.appendChild(td)
 }
+setInterval(function () {
+    socket.emit('getdata');
+    socket.on('navdata', (data) => {
+        var comms = !data ? "Not Connected" : "Connected";
+        var battery
+    })
+})

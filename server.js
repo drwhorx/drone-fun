@@ -11,6 +11,10 @@ var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var navdata;
 client.on('navdata', data => navdata = data);
+setInterval(() => { 
+    if (navdata) console.log(navdata.demo.batteryPercentage);
+    else console.log(navdata)
+}, 1000)
 app.use(express.static('./'))
 app.get('/', function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -21,7 +25,6 @@ app.get('/', function (req, res, next) {
     res.sendFile(__dirname + '/manual.html');
 });
 io.on('connection', function (socket) {
-    socket.emit('news', { hello: 'world' });
     socket.on('comm', function (data) {
         console.log(data)
         var params = data.params;
@@ -31,6 +34,9 @@ io.on('connection', function (socket) {
         console.log(data)
         var params = [client, navdata].concat(data.params);
         custom[data.comm](...params);
+    });
+    socket.on('getdata', () => {
+        socket.emit('navdata', navdata)
     })
 });
 server.listen(8080);

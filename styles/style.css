@@ -48,3 +48,11 @@ table th {
     font-weight: normal;
     font-style: normal;
 }
+#enabled {
+    width: max-content;
+    height: 32px;
+    background-color: #aaaaaa;
+}
+#enabled[checked=""] {
+    background-color: #00b400;
+}

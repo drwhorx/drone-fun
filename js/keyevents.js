@@ -1,5 +1,5 @@
 window.onkeydown = function (e) {
-    if (!document.getElementById("enabled").checked) return;
+    if (document.getElementById("enabled").getAttribute("checked") == null) return;
     var code = e.keyCode;
     var obj = enums[code + "_CODE"];
     if (obj == undefined) return;
@@ -16,7 +16,7 @@ window.onkeydown = function (e) {
     })
 }
 window.onkeyup = function (e) {
-    if (!document.getElementById("enabled").checked) return;
+    if (document.getElementById("enabled").getAttribute("checked") == null) return;
     var code = e.keyCode;
     var obj = enums[code + "_CODE"];
     if (obj == undefined) return;
